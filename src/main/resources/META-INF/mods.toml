@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="donutshop"
+version="1.0.0"
+displayName="Donut Shop"
+authors="Du"
+description='''
+Singleplayer-Wirtschaft im Stil von DonutSMP: Geld verdienen, Items kaufen und verkaufen, staendig wechselnde Preise.
+'''
+
+[[dependencies.donutshop]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.donutshop]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"
