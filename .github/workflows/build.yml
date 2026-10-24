@@ -1,0 +1,45 @@
+name: Mod bauen
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Forge MDK holen und Mod bauen
+        run: |
+          set -e
+          for v in 47.4.28 47.4.10 47.4.0 47.3.0 47.2.0; do
+            if curl -fL -o mdk.zip "https://maven.minecraftforge.net/net/minecraftforge/forge/1.20.1-$v/forge-1.20.1-$v-mdk.zip"; then
+              echo "MDK $v geladen"
+              break
+            fi
+          done
+          unzip -tq mdk.zip
+          mkdir mdk
+          unzip -q mdk.zip -d mdk
+          D=$(dirname "$(find mdk -name gradlew -print -quit)")
+          rm -rf "$D/src"
+          cp -r src "$D/src"
+          sed -i 's/^mod_id=.*/mod_id=donutshop/' "$D/gradle.properties"
+          sed -i 's/^mod_name=.*/mod_name=Donut Shop/' "$D/gradle.properties"
+          sed -i 's/^mod_group_id=.*/mod_group_id=com.donutshop/' "$D/gradle.properties"
+          chmod +x "$D/gradlew"
+          cd "$D"
+          ./gradlew build --no-daemon
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp build/libs/*.jar "$GITHUB_WORKSPACE/out/"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: donutshop-mod
+          path: out/*.jar
